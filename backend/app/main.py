@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -12,6 +12,16 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Local HR Backend")
 
 
+
+
+@app.get("/")
+def root():
+    return {"status": "ok", "service": "Local HR Backend"}
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response(status_code=204)
 @app.post("/auth/register")
 def register(payload: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == payload.email).first():
