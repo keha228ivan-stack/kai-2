@@ -233,3 +233,36 @@ Authorization: Bearer <token>
 - Swagger UI: `http://127.0.0.1:8000/docs`
 - OpenAPI JSON: `http://127.0.0.1:8000/openapi.json`
 
+
+---
+
+## 9) Автоматическая привязка клиентов (одной командой)
+
+Чтобы не прописывать base URL руками в каждом клиенте, используй:
+
+```bash
+./scripts_auto_bind_clients.sh
+```
+
+Скрипт создаст/обновит:
+- `hrrepozik/.env.local`
+- `hrrepozik-modile-2/.env.local`
+- `repozik-desktop2/.env.local`
+
+Со значением:
+
+```text
+API_BASE_URL=http://127.0.0.1:8000
+```
+
+Если нужен другой адрес:
+
+```bash
+./scripts_auto_bind_clients.sh http://localhost:8000
+```
+
+Или можно сразу запустить «автопривязка + backend»:
+
+```bash
+./scripts_run_local_stack.sh
+```
