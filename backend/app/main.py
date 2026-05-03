@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from .auth import create_access_token, get_current_user, hash_password, require_roles, verify_password
 from .database import Base, engine, get_db
 from .models import Course, CourseAssignment, CourseLibrary, Progress, Test, User
-from .schemas import CourseAssignmentCreate, Token, UserCreate
+from .schemas import CourseAssignmentCreate, ProgressUpdate, Token, UserCreate
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Local HR Backend")
@@ -33,6 +33,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 @app.post("/manager/assign", dependencies=[Depends(require_roles("manager"))])
 def assign_course(payload: CourseAssignmentCreate, db: Session = Depends(get_db)):
+    if not db.query(User).filter(User.id == payload.user_id, User.role == "employee").first():
+        raise HTTPException(404, "Employee not found")
+    if not db.query(Course).filter(Course.id == payload.course_id).first():
+        raise HTTPException(404, "Course not found")
+    existing = db.query(CourseAssignment).filter_by(user_id=payload.user_id, course_id=payload.course_id).first()
+    if existing:
+        return {"status": "already_assigned", "assignment_id": existing.id}
     assignment = CourseAssignment(user_id=payload.user_id, course_id=payload.course_id, status="in-progress")
     db.add(assignment)
     db.flush()
@@ -44,6 +51,34 @@ def assign_course(payload: CourseAssignmentCreate, db: Session = Depends(get_db)
 @app.get("/employee/my_courses", dependencies=[Depends(require_roles("employee"))])
 def my_courses(user=Depends(get_current_user), db: Session = Depends(get_db)):
     return db.query(CourseAssignment).filter(CourseAssignment.user_id == user.id, CourseAssignment.status == "in-progress").all()
+
+
+@app.get("/employee/my_courses/{course_id}", dependencies=[Depends(require_roles("employee"))])
+def my_course_detail(course_id: int, user=Depends(get_current_user), db: Session = Depends(get_db)):
+    assignment = db.query(CourseAssignment).filter_by(user_id=user.id, course_id=course_id).first()
+    if not assignment:
+        raise HTTPException(404, "Course not assigned")
+    return assignment
+
+
+@app.get("/employee/my_courses/{course_id}/progress", dependencies=[Depends(require_roles("employee"))])
+def my_course_progress(course_id: int, user=Depends(get_current_user), db: Session = Depends(get_db)):
+    assignment = db.query(CourseAssignment).filter_by(user_id=user.id, course_id=course_id).first()
+    if not assignment or not assignment.progress:
+        raise HTTPException(404, "Progress not found")
+    return assignment.progress
+
+
+@app.patch("/employee/my_courses/{course_id}/progress", dependencies=[Depends(require_roles("employee"))])
+def update_progress(course_id: int, payload: ProgressUpdate, user=Depends(get_current_user), db: Session = Depends(get_db)):
+    assignment = db.query(CourseAssignment).filter_by(user_id=user.id, course_id=course_id).first()
+    if not assignment or not assignment.progress:
+        raise HTTPException(404, "Progress not found")
+    assignment.progress.completion_percentage = max(0.0, min(100.0, payload.completion_percentage))
+    if assignment.progress.completion_percentage >= 100.0:
+        assignment.status = "completed"
+    db.commit()
+    return {"status": assignment.status, "completion_percentage": assignment.progress.completion_percentage}
 
 
 @app.get("/employee/my_courses/{course_id}/test", dependencies=[Depends(require_roles("employee"))])
@@ -75,7 +110,6 @@ def department_stats(department: str, db: Session = Depends(get_db)):
     return {"department": department, "employees_total": total}
 
 
-@app.get("/library/sync")
+@app.get("/library/sync", dependencies=[Depends(require_roles("manager", "employee"))])
 def sync_library(db: Session = Depends(get_db)):
-    # mobile app should not consume this endpoint by policy
     return db.query(CourseLibrary).all()

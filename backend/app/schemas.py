@@ -20,6 +20,10 @@ class CourseAssignmentCreate(BaseModel):
     course_id: int
 
 
+class ProgressUpdate(BaseModel):
+    completion_percentage: float
+
+
 class CourseOut(BaseModel):
     id: int
     name: str
