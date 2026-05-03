@@ -1,0 +1,30 @@
+{
+  "managers": [
+    {
+      "id": "557247ce-30f9-496a-844b-bb85cdda94d9",
+      "fullName": "лол биба",
+      "email": "keha228ivan@gmail.com",
+      "passwordHash": "$2b$12$yZkuD2s27Dys1rIMjHotgOfmsrtCh2cmZUTY7Kr8WElh.42wDgW9.",
+      "role": "MANAGER"
+    }
+  ],
+  "courses": [],
+  "employees": [
+    {
+      "id": "b2eeec40-8291-4f10-85c9-7d78b22c5d3b",
+      "fullName": "впвп",
+      "email": "keha228ivan@ail.com",
+      "departmentId": null,
+      "employeeProfile": {
+        "position": "пидор",
+        "status": "inactive",
+        "performance": 0,
+        "completedCourses": 0,
+        "inProgressCourses": 0
+      }
+    }
+  ],
+  "assignments": [],
+  "courseAudit": [],
+  "notifications": []
+}

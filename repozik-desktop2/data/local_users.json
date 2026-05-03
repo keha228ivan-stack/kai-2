@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "id": "b9b5d456-ef83-4d9d-8d26-9c18e3f10a27",
+      "fullName": "адададда апапап",
+      "email": "keha@mail.ru",
+      "passwordHash": "abd8b02141a5a54107e4dcfdafc7e287105732d1f2075ff9afecef0f111095d6",
+      "role": "EMPLOYEE",
+      "createdAt": "2026-04-29T13:56:35.202802+00:00"
+    }
+  ],
+  "employees": [
+    {
+      "id": "28a67383-6b60-4090-aab6-a489f8ba7578",
+      "userId": "b9b5d456-ef83-4d9d-8d26-9c18e3f10a27",
+      "fullName": "адададда апапап",
+      "email": "keha@mail.ru",
+      "position": "Сотрудник",
+      "department": "Без отдела",
+      "status": "В адаптации",
+      "createdAt": "2026-04-29T13:56:35.202802+00:00"
+    }
+  ]
+}
