@@ -142,3 +142,16 @@ npm run start
 - проверь `npm install` выполнен;
 - проверь версию Node/Python/Flutter;
 - проверь `.env` с `API_BASE_URL=http://127.0.0.1:8000`.
+
+### Error: Can't resolve `tailwindcss` in `C:\projects\kai 2`
+Это значит, что web-клиент запускается не из папки `hrrepozik` **или** не установлены зависимости именно в `hrrepozik`.
+
+Исправление:
+```powershell
+cd C:\projects\kai 2\hrrepozik
+npm install
+npm install -D tailwindcss postcss autoprefixer
+npm run dev
+```
+
+Важно: не запускай `npm run dev` из `C:\projects\kai 2` (корень mono-репозитория).
