@@ -1,146 +1,86 @@
-# Полная инструкция запуска (Windows): backend + web + mobile + desktop
+# Windows Full Stack: backend + web + mobile + desktop (один backend)
 
-## 1) Подготовка
-Открой **PowerShell** в корне проекта (`C:\projects\kai 2`).
+Ниже только практические команды без альтернативных стеков.
 
-Проверь инструменты:
+## 0) Что установить
 ```powershell
 python --version
-pip --version
-git --version
+node --version
+npm --version
 ```
 
-## 2) Запуск backend
-
-### 2.1 Виртуальное окружение
+## 1) Backend (Терминал #1)
 ```powershell
+cd "C:\projects\kai 2"
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
-
-### 2.2 Установка зависимостей
-```powershell
 pip install -r requirements.txt
-```
-
-### 2.3 Старт FastAPI
-```powershell
 uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Проверка:
-- `http://127.0.0.1:8000` → должен вернуться JSON `{"status":"ok",...}`
-- `http://127.0.0.1:8000/docs` → Swagger
+Проверка backend:
+- `http://127.0.0.1:8000`
+- `http://127.0.0.1:8000/docs`
 
-> Backend держим открытым в отдельном окне PowerShell.
-
-## 3) Где прописан адрес backend в клиентах
-
-По умолчанию уже установлено в каждом клиенте:
+## 2) Прописать один API URL для всех клиентов
+Файлы уже должны содержать:
 - `hrrepozik/.env`
 - `hrrepozik-modile-2/.env`
 - `repozik-desktop2/.env`
 
-Содержимое:
+Значение в каждом:
 ```env
 API_BASE_URL=http://127.0.0.1:8000
 ```
 
-## 4) Запуск WEB клиента (менеджер)
-
-Окно PowerShell №2:
+## 3) Web клиент (manager) — Терминал #2
 ```powershell
-cd .\hrrepozik
-```
-
-Используем единый стек для этого проекта: **Next.js**.
-```powershell
+cd "C:\projects\kai 2\hrrepozik"
 npm install
 npm run dev
 ```
 
-После запуска открой локальный URL, который покажет консоль (обычно `http://localhost:5173` или `http://localhost:3000`).
-
-Логинься менеджером и используй:
-- `POST /auth/login`
-- `POST /manager/assign`
-- `GET /manager/employee_courses/{user_id}`
-
-## 5) Запуск MOBILE клиента (админ)
-
-Окно PowerShell №3:
+Если увидишь `Can't resolve 'tailwindcss'`:
 ```powershell
-cd .\hrrepozik-modile-2
+cd "C:\projects\kai 2"
+npm install
+cd "C:\projects\kai 2\hrrepozik"
+npm run dev
 ```
 
-Используем вариант **React Native/Expo** (если mobile нужен для демо):
+## 4) Mobile клиент (admin) — Терминал #3
 ```powershell
+cd "C:\projects\kai 2\hrrepozik-modile-2"
 npm install
 npm run start
 ```
 
-Используй только админ-ручки:
-- `GET /admin/stats`
-- `GET /admin/stats/{department}`
-
-## 6) Запуск DESKTOP клиента (сотрудник)
-
-Окно PowerShell №4:
+## 5) Desktop клиент (employee) — Терминал #4
 ```powershell
-cd .\repozik-desktop2
-```
-
-Desktop-клиент запускай через:
-```powershell
+cd "C:\projects\kai 2\repozik-desktop2"
 npm install
 npm run desktop
 ```
 
-Используй employee-ручки:
-- `POST /auth/register`
-- `POST /auth/login`
-- `GET /employee/my_courses`
-- `GET /employee/my_courses/{course_id}`
-- `GET /employee/my_courses/{course_id}/progress`
-- `PATCH /employee/my_courses/{course_id}/progress`
-- `GET /employee/my_courses/{course_id}/test`
-
-## 7) Как проверить, что все связано
-
-1. В desktop зарегистрируй сотрудника.
-2. В web (менеджер) назначь курс сотруднику.
-3. В desktop обнови список — курс должен быть в "в процессе".
-4. В mobile (админ) проверь рост агрегированной статистики, но без персональных деталей.
-
-## 8) Частые проблемы
-
-### 404 на `/`
-Исправлено: backend теперь отдает `{"status":"ok"}` на корне.
-
-### 401 Unauthorized
-Проверь Bearer токен и роль пользователя.
-
-### Не открывается клиент
-- проверь `npm install` выполнен;
-- проверь версию Node/Python/Flutter;
-- проверь `.env` с `API_BASE_URL=http://127.0.0.1:8000`.
-
-### Error: Can't resolve `tailwindcss` in `C:\projects\kai 2`
-Это значит, что web-клиент запускается не из папки `hrrepozik` **или** не установлены зависимости именно в `hrrepozik`.
-
-Исправление:
+## 6) Прогон API-связки (из корня, Терминал #5)
 ```powershell
-cd C:\projects\kai 2\hrrepozik
-npm install
-npm install -D tailwindcss postcss autoprefixer
-npm run dev
+cd "C:\projects\kai 2"
+.\.venv\Scripts\Activate.ps1
+python scripts_smoke_e2e.py
 ```
 
-Важно: не запускай `npm run dev` из `C:\projects\kai 2` (корень mono-репозитория).
+Ожидаемо в конце:
+- `[ok] end-to-end flow is healthy`
+- `[ok] manager -> employee visibility works`
+- `[ok] assignment -> progress -> test flow works`
+- `[ok] admin stats available`
 
-Если ошибка сохраняется даже при запуске из `hrrepozik`, установи shared dev-зависимости в корне:
-```powershell
-cd C:\projects\kai 2
-npm install
-```
-Это подтянет root-level `tailwindcss/postcss/autoprefixer`, которые Turbopack может резолвить от корня монорепозитория.
+## 7) Что проверить в UI, чтобы увидеть что всё связано
+1. **Desktop (employee):** зайти сотрудником и открыть `my courses`.
+2. **Web (manager):** назначить курс этому сотруднику.
+3. **Desktop (employee):** обновить список — курс должен появиться.
+4. **Desktop (employee):** выставить прогресс 100%.
+5. **Web/Manager или API:** убедиться, что назначение есть.
+6. **Mobile (admin):** открыть `stats` и увидеть агрегированную статистику.
+
+Если этот сценарий проходит — все 3 клиента работают с одним backend и общей БД.
