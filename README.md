@@ -79,3 +79,29 @@ npm run dev
 
 Web: `http://localhost:3000`
 API: `http://127.0.0.1:8000`
+
+
+## Проверка связки клиентов через backend (одной командой)
+После запуска backend выполни:
+```bash
+python scripts_smoke_e2e.py
+```
+
+Скрипт проверяет полный цикл:
+1. регистрация employee/manager/admin;
+2. логин каждой роли;
+3. видимость сотрудника для HR (`/manager/employees`);
+4. назначение курса менеджером;
+5. прогресс и тест у сотрудника;
+6. агрегированная статистика у admin.
+
+Если backend запущен не на `127.0.0.1:8000`, укажи URL:
+```bash
+API_BASE_URL=http://<host>:<port> python scripts_smoke_e2e.py
+```
+
+## Сборка для показа (EXE + APK)
+- **Desktop (EXE)**: собирай в папке `repozik-desktop2` (обычно Electron Builder/Forge).
+- **Mobile (APK)**: собирай в папке `hrrepozik-modile-2` (обычно Expo EAS или Gradle).
+
+Перед сборкой обязательно прогоняй `python scripts_smoke_e2e.py`, чтобы убедиться, что API-логика и БД-связка уже рабочие.
