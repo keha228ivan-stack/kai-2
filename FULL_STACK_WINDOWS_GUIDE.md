@@ -155,3 +155,10 @@ npm run dev
 ```
 
 Важно: не запускай `npm run dev` из `C:\projects\kai 2` (корень mono-репозитория).
+
+Если ошибка сохраняется даже при запуске из `hrrepozik`, установи shared dev-зависимости в корне:
+```powershell
+cd C:\projects\kai 2
+npm install
+```
+Это подтянет root-level `tailwindcss/postcss/autoprefixer`, которые Turbopack может резолвить от корня монорепозитория.

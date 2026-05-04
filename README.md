@@ -22,3 +22,33 @@ uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
 
 - API: `http://127.0.0.1:8000`
 - Swagger: `http://127.0.0.1:8000/docs`
+
+## Частая ошибка web-клиента (`tailwindcss`)
+Если видишь ошибку:
+`Error: Can't resolve 'tailwindcss' in 'C:\projects\kai 2'`
+
+Сделай так (Windows PowerShell):
+```powershell
+cd "C:\projects\kai 2\hrrepozik"
+npm install
+npm install -D tailwindcss postcss autoprefixer
+npm run dev
+```
+
+Важно:
+- не запускай `npm run dev` из `C:\projects\kai 2`;
+- запускать нужно из папки `hrrepozik`, где лежит `package.json` web-клиента.
+
+
+### Если ошибка остаётся даже внутри `hrrepozik`
+Для Next.js 16 + Turbopack в монорепозитории резолв `tailwindcss` иногда идёт от корня (`C:\\projects\\kai 2`).
+Поэтому установи shared dev-зависимости в корне проекта:
+```powershell
+cd "C:\\projects\\kai 2"
+npm install
+```
+После этого снова:
+```powershell
+cd "C:\\projects\\kai 2\\hrrepozik"
+npm run dev
+```
