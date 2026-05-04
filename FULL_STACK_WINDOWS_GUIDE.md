@@ -53,15 +53,7 @@ API_BASE_URL=http://127.0.0.1:8000
 cd .\hrrepozik
 ```
 
-Дальше выбирай команды под твой стек:
-
-### Если React/Vite
-```powershell
-npm install
-npm run dev
-```
-
-### Если Next.js
+Используем единый стек для этого проекта: **Next.js**.
 ```powershell
 npm install
 npm run dev
@@ -81,16 +73,10 @@ npm run dev
 cd .\hrrepozik-modile-2
 ```
 
-### Если React Native + Expo
+Используем вариант **React Native/Expo** (если mobile нужен для демо):
 ```powershell
 npm install
 npm run start
-```
-
-### Если Flutter
-```powershell
-flutter pub get
-flutter run
 ```
 
 Используй только админ-ручки:
@@ -104,14 +90,10 @@ flutter run
 cd .\repozik-desktop2
 ```
 
-### Если Electron
+Desktop-клиент запускай через:
 ```powershell
 npm install
 npm run desktop
-```
-или
-```powershell
-npm run start
 ```
 
 Используй employee-ручки:
