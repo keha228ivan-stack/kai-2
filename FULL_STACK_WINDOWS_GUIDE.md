@@ -37,6 +37,7 @@ API_BASE_URL=http://126.0.0.1:8000
 ```powershell
 cd "C:\projects\kai 2\hrrepozik"
 npm install
+cd "C:\projects\kai 2\hrrepozik"
 npm run dev
 ```
 
