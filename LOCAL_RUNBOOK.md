@@ -235,11 +235,19 @@ npm run dev
 
 Нельзя запускать `npm run dev` из корня `kai-2`.
 
-Если ошибка остаётся даже при запуске из `hrrepozik`, выполни в корне проекта:
-```bash
-npm install
+Если ошибка остаётся даже при запуске из `hrrepozik`, зафиксируй корень Turbopack в `hrrepozik/next.config.ts` (или `next.config.js`):
+```ts
+import path from "node:path";
+
+const nextConfig = {
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
+};
+
+export default nextConfig;
 ```
-В этом репозитории добавлен root `package.json` с `tailwindcss/postcss/autoprefixer`, чтобы Turbopack мог корректно резолвить зависимости от корня.
+После этого перезапусти `npm run dev` в `hrrepozik`.
 
 ### 401 Unauthorized
 - Проверь, что передаёшь JWT в заголовке:

@@ -15,12 +15,12 @@ cd "C:\projects\kai 2"
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+uvicorn backend.app.main:app --reload --host 126.0.0.1 --port 8000
 ```
 
 Проверка backend:
-- `http://127.0.0.1:8000`
-- `http://127.0.0.1:8000/docs`
+- `http://126.0.0.1:8000`
+- `http://126.0.0.1:8000/docs`
 
 ## 2) Прописать один API URL для всех клиентов
 Файлы уже должны содержать:
@@ -30,21 +30,36 @@ uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
 
 Значение в каждом:
 ```env
-API_BASE_URL=http://127.0.0.1:8000
+API_BASE_URL=http://126.0.0.1:8000
 ```
 
 ## 3) Web клиент (manager) — Терминал #2
 ```powershell
 cd "C:\projects\kai 2\hrrepozik"
 npm install
+cd "C:\projects\kai 2\hrrepozik"
 npm run dev
 ```
 
-Если увидишь `Can't resolve 'tailwindcss'`:
+Если увидишь `Can't resolve 'tailwindcss'` (как в твоем логе), проблема в неверном Turbopack root.
+
+В `hrrepozik/next.config.ts` (или `next.config.js`) добавь:
+```ts
+import path from "node:path";
+
+const nextConfig = {
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
+};
+
+export default nextConfig;
+```
+
+После этого:
 ```powershell
-cd "C:\projects\kai 2"
-npm install
 cd "C:\projects\kai 2\hrrepozik"
+npm install
 npm run dev
 ```
 
@@ -62,20 +77,7 @@ npm install
 npm run desktop
 ```
 
-## 6) Прогон API-связки (из корня, Терминал #5)
-```powershell
-cd "C:\projects\kai 2"
-.\.venv\Scripts\Activate.ps1
-python scripts_smoke_e2e.py
-```
-
-Ожидаемо в конце:
-- `[ok] end-to-end flow is healthy`
-- `[ok] manager -> employee visibility works`
-- `[ok] assignment -> progress -> test flow works`
-- `[ok] admin stats available`
-
-## 7) Что проверить в UI, чтобы увидеть что всё связано
+## 6) Что проверить в UI, чтобы увидеть что всё связано
 1. **Desktop (employee):** зайти сотрудником и открыть `my courses`.
 2. **Web (manager):** назначить курс этому сотруднику.
 3. **Desktop (employee):** обновить список — курс должен появиться.
