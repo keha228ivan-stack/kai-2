@@ -1,33 +1,32 @@
-# Client -> Local Backend Integration (default config in client code)
+# Client ↔ Backend integration contract (single stack)
 
-Цель: клиенты должны быть привязаны к локальному backend по умолчанию.
+Этот репозиторий сейчас содержит backend и конфиги клиентов (`.env`), но **не содержит исходный код UI клиентов** (`hrrepozik`, `hrrepozik-modile-2`, `repozik-desktop2`).
 
-Base URL по умолчанию в коде каждого клиента:
-- `http://127.0.0.1:8000`
+Поэтому в рамках этого репозитория фиксируется единый API-контракт и автоматическая проверка совместимости клиентов с backend.
 
-## Web (`hrrepozik`, manager role)
-В коде web-клиента должен быть дефолт:
-- `API_BASE_URL = "http://127.0.0.1:8000"`
+## Единый base URL
+Во всех клиентах:
+- `API_BASE_URL=http://127.0.0.1:8000`
 
-Используемые endpoints:
+Файлы:
+- `hrrepozik/.env`
+- `hrrepozik-modile-2/.env`
+- `repozik-desktop2/.env`
+
+## Роли и endpoints
+
+### Web (`hrrepozik`, manager)
 - `POST /auth/login`
 - `POST /manager/assign`
+- `GET /manager/employees`
 - `GET /manager/employee_courses/{user_id}`
 - `GET /library/sync`
 
-## Mobile (`hrrepozik-modile-2`, admin role)
-В коде mobile-клиента должен быть дефолт:
-- `API_BASE_URL = "http://127.0.0.1:8000"`
-
-Используемые endpoints:
+### Mobile (`hrrepozik-modile-2`, admin)
 - `GET /admin/stats`
 - `GET /admin/stats/{department}`
 
-## Desktop (`repozik-desktop2`, employee role)
-В коде desktop-клиента должен быть дефолт:
-- `API_BASE_URL = "http://127.0.0.1:8000"`
-
-Используемые endpoints:
+### Desktop (`repozik-desktop2`, employee)
 - `POST /auth/register`
 - `POST /auth/login`
 - `GET /employee/my_courses`
@@ -37,10 +36,23 @@ Base URL по умолчанию в коде каждого клиента:
 - `GET /employee/my_courses/{course_id}/test`
 - `GET /library/sync`
 
+## Проверка совместимости (автоматически)
+1. Запусти backend:
+```bash
+uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+```
+2. Прогони проверку контракта:
+```bash
+python scripts_validate_clients_compat.py
+```
 
-## Current repo defaults
-- `hrrepozik/.env`
-- `hrrepozik-modile-2/.env`
-- `repozik-desktop2/.env`
+Скрипт проверит:
+- что backend действительно публикует нужные endpoints в `openapi.json`;
+- что `.env` клиентов указывают на правильный `API_BASE_URL`;
+- что контракт web/mobile/desktop не расходится с backend API.
 
-Each already contains `API_BASE_URL=http://127.0.0.1:8000`.
+## Полный smoke поток
+```bash
+python scripts_smoke_e2e.py
+```
+Проверяет рабочую бизнес-цепочку: register/login/assign/progress/test/admin stats.
