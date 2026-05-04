@@ -1,0 +1,11 @@
+{
+  "name": "kai-2-root",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Root package to provide shared frontend tooling resolution for monorepo clients.",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.8"
+  }
+}
