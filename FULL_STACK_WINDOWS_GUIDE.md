@@ -53,15 +53,7 @@ API_BASE_URL=http://127.0.0.1:8000
 cd .\hrrepozik
 ```
 
-Дальше выбирай команды под твой стек:
-
-### Если React/Vite
-```powershell
-npm install
-npm run dev
-```
-
-### Если Next.js
+Используем единый стек для этого проекта: **Next.js**.
 ```powershell
 npm install
 npm run dev
@@ -81,16 +73,10 @@ npm run dev
 cd .\hrrepozik-modile-2
 ```
 
-### Если React Native + Expo
+Используем вариант **React Native/Expo** (если mobile нужен для демо):
 ```powershell
 npm install
 npm run start
-```
-
-### Если Flutter
-```powershell
-flutter pub get
-flutter run
 ```
 
 Используй только админ-ручки:
@@ -104,14 +90,10 @@ flutter run
 cd .\repozik-desktop2
 ```
 
-### Если Electron
+Desktop-клиент запускай через:
 ```powershell
 npm install
 npm run desktop
-```
-или
-```powershell
-npm run start
 ```
 
 Используй employee-ручки:
@@ -142,3 +124,23 @@ npm run start
 - проверь `npm install` выполнен;
 - проверь версию Node/Python/Flutter;
 - проверь `.env` с `API_BASE_URL=http://127.0.0.1:8000`.
+
+### Error: Can't resolve `tailwindcss` in `C:\projects\kai 2`
+Это значит, что web-клиент запускается не из папки `hrrepozik` **или** не установлены зависимости именно в `hrrepozik`.
+
+Исправление:
+```powershell
+cd C:\projects\kai 2\hrrepozik
+npm install
+npm install -D tailwindcss postcss autoprefixer
+npm run dev
+```
+
+Важно: не запускай `npm run dev` из `C:\projects\kai 2` (корень mono-репозитория).
+
+Если ошибка сохраняется даже при запуске из `hrrepozik`, установи shared dev-зависимости в корне:
+```powershell
+cd C:\projects\kai 2
+npm install
+```
+Это подтянет root-level `tailwindcss/postcss/autoprefixer`, которые Turbopack может резолвить от корня монорепозитория.

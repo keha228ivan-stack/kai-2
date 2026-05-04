@@ -4,6 +4,9 @@
 
 ---
 
+## 0.1) Рекомендуемый формат для учебного показа
+Чтобы не распыляться по разным стекам, поднимай сначала **только backend + web (`hrrepozik`)**. Этого достаточно, чтобы показать рабочую интеграцию с БД, авторизацию и бизнес-логику. Mobile/desktop подключай как дополнительный бонус.
+
 ## 0) Что должно быть установлено
 
 ```bash
@@ -218,6 +221,25 @@ lsof -i :8000
 ```text
 http://127.0.0.1:8000
 ```
+
+#### Ошибка `Can't resolve 'tailwindcss' in 'C:\projects\kai 2'`
+Причина: web запускается из корня репозитория, а не из `hrrepozik`, либо в `hrrepozik` не установлены npm-зависимости.
+
+Исправление:
+```bash
+cd hrrepozik
+npm install
+npm install -D tailwindcss postcss autoprefixer
+npm run dev
+```
+
+Нельзя запускать `npm run dev` из корня `kai-2`.
+
+Если ошибка остаётся даже при запуске из `hrrepozik`, выполни в корне проекта:
+```bash
+npm install
+```
+В этом репозитории добавлен root `package.json` с `tailwindcss/postcss/autoprefixer`, чтобы Turbopack мог корректно резолвить зависимости от корня.
 
 ### 401 Unauthorized
 - Проверь, что передаёшь JWT в заголовке:
