@@ -43,7 +43,7 @@ npm run dev
 
 Если увидишь `Can't resolve 'tailwindcss'` (как в твоем логе), проблема в неверном Turbopack root.
 
-В `hrrepozik/next.config.ts` (или `next.config.js`) добавь:
+В проект уже добавлен файл `hrrepozik/next.config.mjs` с фиксом Turbopack root:
 ```ts
 import path from "node:path";
 
