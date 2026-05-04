@@ -43,7 +43,7 @@ npm run dev
 ### Если ошибка остаётся даже внутри `hrrepozik`
 Это не проблема backend. Это Turbopack выбирает неверный workspace root.
 
-Добавь в `hrrepozik/next.config.ts` (или `next.config.js`):
+Уже добавлено в `hrrepozik/next.config.mjs` (фикс Turbopack root):
 ```ts
 import path from "node:path";
 

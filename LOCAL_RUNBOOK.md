@@ -235,7 +235,7 @@ npm run dev
 
 Нельзя запускать `npm run dev` из корня `kai-2`.
 
-Если ошибка остаётся даже при запуске из `hrrepozik`, зафиксируй корень Turbopack в `hrrepozik/next.config.ts` (или `next.config.js`):
+Если ошибка остаётся даже при запуске из `hrrepozik`, корень Turbopack уже зафиксирован в `hrrepozik/next.config.mjs`:
 ```ts
 import path from "node:path";
 
