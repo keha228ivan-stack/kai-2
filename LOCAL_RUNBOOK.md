@@ -232,6 +232,12 @@ npm run dev
 
 Нельзя запускать `npm run dev` из корня `kai-2`.
 
+Если ошибка остаётся даже при запуске из `hrrepozik`, выполни в корне проекта:
+```bash
+npm install
+```
+В этом репозитории добавлен root `package.json` с `tailwindcss/postcss/autoprefixer`, чтобы Turbopack мог корректно резолвить зависимости от корня.
+
 ### 401 Unauthorized
 - Проверь, что передаёшь JWT в заголовке:
 ```text
