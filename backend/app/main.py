@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -8,9 +9,46 @@ from .database import Base, engine, get_db
 from .models import Course, CourseAssignment, CourseLibrary, Progress, Test, User
 from .schemas import CourseAssignmentCreate, ProgressUpdate, Token, UserCreate
 
+
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Local HR Backend")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8081",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+def seed_demo_data(db: Session) -> None:
+    if db.query(Course).count() > 0:
+        return
+
+    course = Course(name="HR onboarding", description="Base onboarding course for local demo")
+    db.add(course)
+    db.flush()
+
+    db.add(Test(course_id=course.id, questions='[{"q":"What is onboarding?","a":"Process"}]'))
+    db.add(CourseLibrary(course_id=course.id, channel="web"))
+    db.add(CourseLibrary(course_id=course.id, channel="desktop"))
+    db.commit()
+
+
+@app.on_event("startup")
+def startup_seed() -> None:
+    db = next(get_db())
+    try:
+        seed_demo_data(db)
+    finally:
+        db.close()
 
 
 
@@ -99,8 +137,20 @@ def my_test(course_id: int, user=Depends(get_current_user), db: Session = Depend
     return db.query(Test).filter(Test.course_id == course_id).all()
 
 
+@app.get("/manager/employees", dependencies=[Depends(require_roles("manager"))])
+def manager_employees(db: Session = Depends(get_db)):
+    users = db.query(User).filter(User.role == "employee").all()
+    return [
+        {"id": u.id, "name": u.name, "email": u.email, "department": u.department}
+        for u in users
+    ]
+
+
 @app.get("/manager/employee_courses/{user_id}", dependencies=[Depends(require_roles("manager"))])
 def employee_courses(user_id: int, db: Session = Depends(get_db)):
+    employee = db.query(User).filter(User.id == user_id, User.role == "employee").first()
+    if not employee:
+        raise HTTPException(404, "Employee not found")
     return {"user_id": user_id, "assigned_courses": db.query(CourseAssignment).filter_by(user_id=user_id).count()}
 
 
