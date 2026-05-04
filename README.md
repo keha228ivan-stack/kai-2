@@ -41,18 +41,26 @@ npm run dev
 
 
 ### Если ошибка остаётся даже внутри `hrrepozik`
-Для Next.js 16 + Turbopack в монорепозитории резолв `tailwindcss` иногда идёт от корня (`C:\\projects\\kai 2`).
-Поэтому установи shared dev-зависимости в корне проекта:
-```powershell
-cd "C:\\projects\\kai 2"
-npm install
-```
-После этого снова:
-```powershell
-cd "C:\\projects\\kai 2\\hrrepozik"
-npm run dev
+Это не проблема backend. Это Turbopack выбирает неверный workspace root.
+
+Добавь в `hrrepozik/next.config.ts` (или `next.config.js`):
+```ts
+import path from "node:path";
+
+const nextConfig = {
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
+};
+
+export default nextConfig;
 ```
 
+После этого перезапусти из `hrrepozik`:
+```powershell
+npm install
+npm run dev
+```
 
 ## Рекомендуемый единый стек (для учебного демо)
 Чтобы не путаться, используем один понятный стек:
@@ -79,29 +87,3 @@ npm run dev
 
 Web: `http://localhost:3000`
 API: `http://127.0.0.1:8000`
-
-
-## Проверка связки клиентов через backend (одной командой)
-После запуска backend выполни:
-```bash
-python scripts_smoke_e2e.py
-```
-
-Скрипт проверяет полный цикл:
-1. регистрация employee/manager/admin;
-2. логин каждой роли;
-3. видимость сотрудника для HR (`/manager/employees`);
-4. назначение курса менеджером;
-5. прогресс и тест у сотрудника;
-6. агрегированная статистика у admin.
-
-Если backend запущен не на `127.0.0.1:8000`, укажи URL:
-```bash
-API_BASE_URL=http://<host>:<port> python scripts_smoke_e2e.py
-```
-
-## Сборка для показа (EXE + APK)
-- **Desktop (EXE)**: собирай в папке `repozik-desktop2` (обычно Electron Builder/Forge).
-- **Mobile (APK)**: собирай в папке `hrrepozik-modile-2` (обычно Expo EAS или Gradle).
-
-Перед сборкой обязательно прогоняй `python scripts_smoke_e2e.py`, чтобы убедиться, что API-логика и БД-связка уже рабочие.

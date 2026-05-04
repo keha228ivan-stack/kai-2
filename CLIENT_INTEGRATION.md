@@ -36,23 +36,7 @@
 - `GET /employee/my_courses/{course_id}/test`
 - `GET /library/sync`
 
-## Проверка совместимости (автоматически)
-1. Запусти backend:
-```bash
-uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
-```
-2. Прогони проверку контракта:
-```bash
-python scripts_validate_clients_compat.py
-```
-
-Скрипт проверит:
-- что backend действительно публикует нужные endpoints в `openapi.json`;
-- что `.env` клиентов указывают на правильный `API_BASE_URL`;
-- что контракт web/mobile/desktop не расходится с backend API.
-
-## Полный smoke поток
-```bash
-python scripts_smoke_e2e.py
-```
-Проверяет рабочую бизнес-цепочку: register/login/assign/progress/test/admin stats.
+## Проверка совместимости (вручную)
+1. Запусти backend: `uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000`
+2. Открой `http://127.0.0.1:8000/docs` и проверь, что endpoints из списка выше доступны.
+3. Убедись, что во всех `.env` клиентов один и тот же `API_BASE_URL=http://127.0.0.1:8000`.
