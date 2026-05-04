@@ -37,7 +37,6 @@ API_BASE_URL=http://126.0.0.1:8000
 ```powershell
 cd "C:\projects\kai 2\hrrepozik"
 npm install
-cd "C:\projects\kai 2\hrrepozik"
 npm run dev
 ```
 
@@ -47,9 +46,16 @@ npm run dev
 ```ts
 import path from "node:path";
 
+const projectRoot = path.resolve(process.cwd());
+
 const nextConfig = {
   turbopack: {
-    root: path.resolve(__dirname),
+    root: projectRoot,
+    resolveAlias: {
+      tailwindcss: path.join(projectRoot, "node_modules", "tailwindcss"),
+      postcss: path.join(projectRoot, "node_modules", "postcss"),
+      autoprefixer: path.join(projectRoot, "node_modules", "autoprefixer"),
+    },
   },
 };
 
@@ -86,3 +92,17 @@ npm run desktop
 6. **Mobile (admin):** открыть `stats` и увидеть агрегированную статистику.
 
 Если этот сценарий проходит — все 3 клиента работают с одним backend и общей БД.
+
+
+Если ошибка всё равно повторяется, значит в корне `C:\projects\kai 2` остались лишние npm-файлы от прошлых попыток. Очисти их один раз:
+```powershell
+cd "C:\projects\kai 2"
+if (Test-Path package.json) { del package.json }
+if (Test-Path package-lock.json) { del package-lock.json }
+if (Test-Path node_modules) { rmdir /s /q node_modules }
+cd "C:\projects\kai 2\hrrepozik"
+rmdir /s /q node_modules
+del package-lock.json
+npm install
+npm run dev
+```
